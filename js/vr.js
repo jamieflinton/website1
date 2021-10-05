@@ -1418,8 +1418,8 @@ var CarBody = /** @class */ (function () {
         this.matBodyBlack = new THREE.MeshLambertMaterial({
             color: 0x000000,
             emissive: 0x444444,
-            reflectivity: 0.2,
-            roughness: 0.5,
+            reflectivity: 0,
+            roughness: 1,
             envMap: this.envCube,
         });
         // Tinted windows
