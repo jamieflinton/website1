@@ -1418,7 +1418,7 @@ var CarBody = /** @class */ (function () {
         this.matBodyBlack = new THREE.MeshLambertMaterial({
             color: 0x000000,
             emissive: 0x444444,
-            reflectivity: 0.8,
+            reflectivity: 0.2,
             envMap: this.envCube,
         });
         // Tinted windows
