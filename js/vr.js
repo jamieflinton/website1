@@ -1544,7 +1544,7 @@ var CarLights = /** @class */ (function () {
             vertexShader: tailGridVS,
             fragmentShader: tailGridFS
         });
-       
+        this.carChassis.getObjectByName("HeadLights").material = this.matHeadLights;
         this.carChassis.getObjectByName("TailLights").material = this.matTailLights;
         tailGrid.material = this.matTailGrid;
     };
