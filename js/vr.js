@@ -175,7 +175,7 @@ var FF91 = /** @class */ (function () {
     function FF91() {
     }
     FF91.Accel = 20; // m/s^2
-    FF91.Decel = -50; // m/s^2
+    FF91.Decel = -20; // m/s^2
     FF91.MaxVel = (70 * 1610) / 3600; // 70m/h ~= 31.3m/s
     FF91.MaxTurn = Math.PI * 0.20; // Max angle of wheel turn
     // Dimensions
