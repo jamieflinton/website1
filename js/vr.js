@@ -1419,6 +1419,7 @@ var CarBody = /** @class */ (function () {
             color: 0x000000,
             emissive: 0x444444,
             reflectivity: 0.2,
+            roughness: 0.5,
             envMap: this.envCube,
         });
         // Tinted windows
