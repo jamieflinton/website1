@@ -1417,8 +1417,8 @@ var CarBody = /** @class */ (function () {
         // Material Body Black
         this.matBodyBlack = new THREE.MeshLambertMaterial({
             color: 0x000000,
-            emissive: 0x444444,
-            reflectivity: 0.8,
+            emissive: 0x2d2d2d,
+            reflectivity: 0.3,
             envMap: this.envCube,
         });
         // Tinted windows
@@ -1544,7 +1544,6 @@ var CarLights = /** @class */ (function () {
             vertexShader: tailGridVS,
             fragmentShader: tailGridFS
         });
-       
         this.carChassis.getObjectByName("TailLights").material = this.matTailLights;
         tailGrid.material = this.matTailGrid;
     };
