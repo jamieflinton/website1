@@ -183,7 +183,7 @@ var FF91 = /** @class */ (function () {
     FF91.Width = 2.283; // Car width
     FF91.WheelTrack = 1.72; // Wheel track
     FF91.WheelBase = 3.200; // Wheel base
-    FF91.WheelDiam = 0.650; // Wheel diameter
+    FF91.WheelDiam = 0.450; // Wheel diameter
     FF91.WheelCirc = FF91.WheelDiam * Math.PI; // Wheel circumference
     return FF91;
 }());
@@ -1449,9 +1449,9 @@ var CarBody = /** @class */ (function () {
         return _bodyGeom;
     };
     CarBody.prototype.addShadow = function (_shad) {
-        var shadowPlane = new THREE.PlaneBufferGeometry(6.5, 6.5, 1, 1);
+        var shadowPlane = new THREE.PlaneBufferGeometry(6.5, 6.5, 1, 2);
         shadowPlane.rotateX(-Math.PI / 2);
-        shadowPlane.translate(1.56, 0, 0);
+        shadowPlane.translate(1.56, -0.08, 0);
         var shadowMat = new THREE.MeshBasicMaterial({
             map: _shad,
             side: THREE.DoubleSide,
@@ -1470,8 +1470,8 @@ var CarBody = /** @class */ (function () {
     CarBody.prototype.update = function (_props) {
         // Apply car physics
         this.carWhole.rotation.y = _props.theta;
-        this.carChassis.rotation.z = _props.longitMomentum * 0.0015;
-        this.carChassis.rotation.x = _props.lateralMomentum * 0.0025;
+        this.carChassis.rotation.z = _props.longitMomentum * 0.0010;
+        this.carChassis.rotation.x = _props.lateralMomentum * 0.0020;
         this.carWheels.update(_props);
         this.carLights.update(_props);
     };
@@ -1510,7 +1510,7 @@ var CarLights = /** @class */ (function () {
         this.uniLightsOther = new THREE.Vector3(0, 1, 0);
         this.initLightMeshes();
         this.initHeadlightFlares();
-        this.initStopFlares();
+        //this.initStopFlares();
         this.initTurnFlares();
     }
     ////////////////// SOLID LIGHT MESHES //////////////////
@@ -1569,11 +1569,11 @@ var CarLights = /** @class */ (function () {
         // Make positions
         var posArray = new Float32Array([
             // Passenger
-            5400, 1500, 1350,
-            5400, 1500, 1500,
+            5400, 1250, 1350,
+            5400, 1250, 1500,
             // Driver
-            5400, 1500, -1350,
-            5400, 1500, -1500,
+            5400, 1250, -1350,
+            5400, 1250, -1500,
         ]);
         // Make normals
         var normArray = new Float32Array([
@@ -1589,20 +1589,20 @@ var CarLights = /** @class */ (function () {
         this.carChassis.add(this.flareHeadPoints);
     };
     ////////////////// STOPLIGHT FLARES //////////////////
-    CarLights.prototype.initStopFlares = function () {
-        var glowStopMat = new THREE.ShaderMaterial({
-            uniforms: {
-                texture: { value: this.glowStopText }
-            },
-            vertexShader: tailGridVS,
-            fragmentShader: tailGridFS,
-            blending: THREE.AdditiveBlending,
-            transparent: false,
-            depthTest: true
-        });
-        this.glowStop = this.carChassis.getObjectByName("Stop");
-        this.glowStop.material = glowStopMat;
-    };
+    //CarLights.prototype.initStopFlares = function () {
+      //  var glowStopMat = new THREE.ShaderMaterial({
+        //    uniforms: {
+          //      texture: { value: this.glowStopText }
+            //},
+            //vertexShader: tailGridVS,
+            //fragmentShader: tailGridFS,
+            //blending: THREE.AdditiveBlending,
+            //transparent: false,
+            //depthTest: true
+        //});
+        //this.glowStop = this.carChassis.getObjectByName("Stop");
+       // this.glowStop.material = glowStopMat;
+    //};
     ////////////////// TURN SIGNALS //////////////////
     CarLights.prototype.initTurnFlares = function () {
         // Left grid
@@ -1666,7 +1666,7 @@ var CarLights = /** @class */ (function () {
             this.uniLightsTurn.x = 0;
         }
         this.uniLightsOther.x = _props.braking;
-        this.glowStop.visible = _props.braking ? true : false;
+       // this.glowStop.visible = _props.braking ? true : false;
         this.flareLPoints.visible = this.uniLightsTurn.y ? true : false;
         this.flareRPoints.visible = this.uniLightsTurn.z ? true : false;
     };
@@ -1699,7 +1699,7 @@ var CarWheels = /** @class */ (function () {
         this.wPosB = 0;
         this.wPosL = CarProps_1.FF91.WheelTrack / -2;
         this.wPosR = CarProps_1.FF91.WheelTrack / 2;
-        this.wPosY = CarProps_1.FF91.WheelDiam / 2;
+        this.wPosY = CarProps_1.FF91.WheelDiam / 1.5;
         var wheelGeom = _cargo["vrWheelBrakes"];
         this.addLeftWheels(wheelGeom.getObjectByName("Wheel"));
         this.addRightWheels();
