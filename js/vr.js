@@ -183,7 +183,7 @@ var FF91 = /** @class */ (function () {
     FF91.Width = 2.283; // Car width
     FF91.WheelTrack = 1.72; // Wheel track
     FF91.WheelBase = 3.200; // Wheel base
-    FF91.WheelDiam = 0.780; // Wheel diameter
+    FF91.WheelDiam = 0.650; // Wheel diameter
     FF91.WheelCirc = FF91.WheelDiam * Math.PI; // Wheel circumference
     return FF91;
 }());
@@ -709,7 +709,7 @@ module.exports = "varying float brightness;\nvarying vec2 vUV;\n\n// Normalizes 
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = "#define NIGHTLIGHT 0.4\n\nfloat normFloat(float n, float minVal, float maxVal){\n\treturn max(0.0, min(1.0, (n-minVal) / (maxVal-minVal)));\n}\n\n// Returns 1 if type matches val, 0 if not\nfloat checkType(float type, float val){\n\treturn step(val - 0.1, type) * step(type, val + 0.1);\n}\n\nuniform vec3 lightsT;\nuniform vec3 lightsO;\nattribute float type;\nvarying float red;\nvarying float amb;\nvarying float wht;\nvarying float brightness;\n\nvoid main(){\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );\n\n \tvec3 realPos = vec3(modelMatrix * vec4(position, 1.0));\n\tvec3 realNorm = normalize(vec3(modelMatrix * vec4(normal, 0.0)));\n\n\tvec3 lightVector = normalize(cameraPosition - realPos);\n\tbrightness = dot(realNorm, lightVector);\n\tbrightness = normFloat(brightness, 0.3, 0.2) + 0.5;\n\tbrightness *= brightness * brightness;\n\t\n\t// Type 0: FF logo\t\n\tred = checkType(type, 0.0);\n\t// FF brightens on stop light\n\tred += red * lightsO.x;\n\n\t// Type 1: center grid\n\tred += checkType(type, 1.0) * NIGHTLIGHT;\n\n\t// Type 2: Right blinker\n\tred += (checkType(type, 2.0) * NIGHTLIGHT) * step(lightsT.x, 0.0);\n\tamb = checkType(type, 2.0) * lightsT.z;\n\n\t// Type 3: Left blinker\n\tred += (checkType(type, 3.0) * NIGHTLIGHT) * step(0.0, lightsT.x);\n\tamb += checkType(type, 3.0) * lightsT.y;\n\t\n\tbrightness = clamp(brightness, 0.0, 1.0);\n}"
+module.exports = "#define NIGHTLIGHT 0.4\n\nfloat normFloat(float n, float minVal, float maxVal){\n\treturn max(0.0, min(1.0, (n-minVal) / (maxVal-minVal)));\n}\n\n// Returns 1 if type matches val, 0 if not\nfloat checkType(float type, float val){\n\treturn step(val - 0.1, type) * step(type, val + 0.1);\n}\n\nuniform vec3 lightsT;\nuniform vec3 lightsO;\nattribute float type;\nvarying float red;\nvarying float amb;\nvarying float wht;\nvarying float brightness;\n\nvoid main(){\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );\n\n \tvec3 realPos = vec3(modelMatrix * vec4(position, 1.0));\n\tvec3 realNorm = normalize(vec3(modelMatrix * vec4(normal, 0.0)));\n\n\tvec3 lightVector = normalize(cameraPosition - realPos);\n\tbrightness = dot(realNorm, lightVector);\n\tbrightness = normFloat(brightness, 0.3, 0.2) + 0.5;\n\tbrightness *= brightness * brightness;\n\t\n\t// Type 0: FF logo\t\n\tred = checkType(type, 0.0);\n\t// FF brightens on stop light\n\tred += red * lightsO.x;\n\n\t// Type 1: center grid\n\tred += checkType(type, 1.0) * NIGHTLIGHT;\n\n\t// Type 2: Right blinker\n\tred += (checkType(type, 2.0) * NIGHTLIGHT) * step(lightsT.x, 0.0);\n\tamb = checkType(type, 2.0) * lightsT.z;\n\n\t// Type 3: Left blinker\n\tred += (checkType(type, 3.0) * NIGHTLIGHT) * step(0.0, lightsT.x);\n\tamb += checkType(type, 3.0) * lightsT.y;\n\t\n\tbrightness = clamp(brightness, 0.7, 100.0);\n}"
 
 /***/ }),
 /* 9 */
@@ -721,7 +721,7 @@ module.exports = "#define RED vec3(1.0, 0.1, 0.1) // red\n#define AMB vec3(1.0, 
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = "#define NIGHTLIGHT 0.4\n\nfloat normFloat(float n, float minVal, float maxVal){\n\treturn max(0.0, min(1.0, (n-minVal) / (maxVal-minVal)));\n}\n\n// Returns 1 if type matches val, 0 if not\nfloat checkType(float type, float val){\n\treturn step(val - 0.1, type) * step(type, val + 0.1);\n}\n\nuniform vec3 lightsT;\nuniform vec3 lightsO;\nattribute float type;\nvarying float red;\nvarying float amb;\nvarying float wht;\nvarying float brightness;\n\nvoid main(){\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );\n\tbrightness = 1.0;\n\n\t// Type 0: Reverse light?\n\n\t// Type 1: Right blinker\n\tamb = checkType(type, 1.0) * lightsT.z;\n\n\t// Type 2: Left blinker\n\tamb += checkType(type, 2.0) * lightsT.y;\n\n\t// Type 3: Side brakelights & side nightlights\n\tred = checkType(type, 3.0) * (NIGHTLIGHT + lightsO.x * (1.0 - NIGHTLIGHT));\n\n\t// Type 4: Center brakelight\n\tred += checkType(type, 4.0) * lightsO.x;\n\n\t// Type 5: Center nightlight\n\tred += checkType(type, 5.0) * NIGHTLIGHT;\n\n\t// Type 6: Lower foglights off\n\tred += checkType(type, 6.0) * NIGHTLIGHT * 0.2;\n\n\t// Type 7: Lower foglights on\n\tred += checkType(type, 7.0) * NIGHTLIGHT * 1.5;\n}"
+module.exports = "#define NIGHTLIGHT 0.4\n\nfloat normFloat(float n, float minVal, float maxVal){\n\treturn max(0.0, min(1.0, (n-minVal) / (maxVal-minVal)));\n}\n\n// Returns 1 if type matches val, 0 if not\nfloat checkType(float type, float val){\n\treturn step(val - 0.1, type) * step(type, val + 0.1);\n}\n\nuniform vec3 lightsT;\nuniform vec3 lightsO;\nattribute float type;\nvarying float red;\nvarying float amb;\nvarying float wht;\nvarying float brightness;\n\nvoid main(){\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );\n\tbrightness = 10.0;\n\n\t// Type 0: Reverse light?\n\n\t// Type 1: Right blinker\n\tamb = checkType(type, 1.0) * lightsT.z;\n\n\t// Type 2: Left blinker\n\tamb += checkType(type, 2.0) * lightsT.y;\n\n\t// Type 3: Side brakelights & side nightlights\n\tred = checkType(type, 3.0) * (NIGHTLIGHT + lightsO.x * (1.0 - NIGHTLIGHT));\n\n\t// Type 4: Center brakelight\n\tred += checkType(type, 4.0) * lightsO.x;\n\n\t// Type 5: Center nightlight\n\tred += checkType(type, 5.0) * NIGHTLIGHT;\n\n\t// Type 6: Lower foglights off\n\tred += checkType(type, 6.0) * NIGHTLIGHT * 0.2;\n\n\t// Type 7: Lower foglights on\n\tred += checkType(type, 7.0) * NIGHTLIGHT * 1.5;\n}"
 
 /***/ }),
 /* 11 */
@@ -733,7 +733,7 @@ module.exports = "uniform sampler2D texture;\nvarying float brightness;\nvarying
 /* 12 */
 /***/ (function(module, exports) {
 
-module.exports = "uniform vec3 lightsT;\nvarying float brightness;\nvarying vec2 vUV;\n\n// Normalizes a value between 0 - 1\nfloat normFloat(float n, float minVal, float maxVal){\n    return max(0.0, min(1.0, (n-minVal) / (maxVal-minVal)));\n}\n\nvoid main() {\n\tvUV = uv;\n    vec4 realPos = modelMatrix * vec4(position, 1.0);\n    vec3 realNorm = normalize(vec3(modelMatrix * vec4(normal, 0.0)));\n\n    vec3 lightVector = normalize(cameraPosition - realPos.xyz);\n    float diffuse = dot(realNorm, lightVector);\n    brightness = step(2000.0, position.y) * lightsT.z + step(position.y, 2000.0) * lightsT.y;\n    brightness *= normFloat(diffuse, 0.0, 0.5);\n\n    vec4 mvPosition = viewMatrix * realPos;\n    gl_Position = projectionMatrix * mvPosition;\n}"
+module.exports = "uniform vec3 lightsT;\nvarying float brightness;\nvarying vec2 vUV;\n\n// Normalizes a value between 0 - 1\nfloat normFloat(float n, float minVal, float maxVal){\n    return max(0.0, min(1.0, (n-minVal) / (maxVal-minVal)));\n}\n\nvoid main() {\n\tvUV = uv;\n    vec4 realPos = modelMatrix * vec4(position, 1.0);\n    vec3 realNorm = normalize(vec3(modelMatrix * vec4(normal, 0.0)));\n\n    vec3 lightVector = normalize(cameraPosition - realPos.xyz);\n    float diffuse = dot(realNorm, lightVector);\n    brightness = step(2000.0, position.y) * lightsT.z + step(position.y, 2000.0) * lightsT.y;\n    brightness *= normFloat(diffuse, 0.7, 5.5);\n\n    vec4 mvPosition = viewMatrix * realPos;\n    gl_Position = projectionMatrix * mvPosition;\n}"
 
 /***/ }),
 /* 13 */
@@ -1417,8 +1417,8 @@ var CarBody = /** @class */ (function () {
         // Material Body Black
         this.matBodyBlack = new THREE.MeshLambertMaterial({
             color: 0x000000,
-            emissive: 0x2d2d2d,
-            reflectivity: 0.3,
+            emissive: 0x444444,
+            reflectivity: 0.8,
             envMap: this.envCube,
         });
         // Tinted windows
@@ -1471,7 +1471,7 @@ var CarBody = /** @class */ (function () {
         // Apply car physics
         this.carWhole.rotation.y = _props.theta;
         this.carChassis.rotation.z = _props.longitMomentum * 0.0015;
-        this.carChassis.rotation.x = _props.lateralMomentum * 0.002;
+        this.carChassis.rotation.x = _props.lateralMomentum * 0.0025;
         this.carWheels.update(_props);
         this.carLights.update(_props);
     };
@@ -1521,16 +1521,17 @@ var CarLights = /** @class */ (function () {
         this.matHeadLights = new THREE.ShaderMaterial({
             uniforms: {
                 lightsT: { value: this.uniLightsTurn },
-                lightsO: { value: this.uniLightsOther }
+                lightsO: { value: this.uniLightsOther },
             },
             vertexShader: headgridVS,
-            fragmentShader: headgridFS
+            fragmentShader: headgridFS    
         });
         // Taillight material
         this.matTailLights = new THREE.ShaderMaterial({
             uniforms: {
                 lightsT: { value: this.uniLightsTurn },
-                lightsO: { value: this.uniLightsOther }
+                lightsO: { value: this.uniLightsOther },
+                brightness: 1
             },
             vertexShader: tailLightVS,
             fragmentShader: tailGridFS,
@@ -1544,8 +1545,10 @@ var CarLights = /** @class */ (function () {
             vertexShader: tailGridVS,
             fragmentShader: tailGridFS
         });
+        this.carChassis.getObjectByName("HeadLights").material = this.matHeadLights;      
         this.carChassis.getObjectByName("TailLights").material = this.matTailLights;
         tailGrid.material = this.matTailGrid;
+
     };
     ////////////////// HEADLIGHT FLARES //////////////////
     CarLights.prototype.initHeadlightFlares = function () {
@@ -1553,7 +1556,7 @@ var CarLights = /** @class */ (function () {
             uniforms: {
                 texture: { value: this.flareHeadText },
                 vpH: { value: window.innerHeight },
-                size: { value: 1.5 },
+                size: { value: 4.5 },
                 brightness: { value: 1.0 }
             },
             vertexShader: flareVS,
@@ -1566,11 +1569,11 @@ var CarLights = /** @class */ (function () {
         // Make positions
         var posArray = new Float32Array([
             // Passenger
-            4000, 1875, 1700,
-            4300, 1800, 1700,
+            5400, 1500, 1350,
+            5400, 1500, 1500,
             // Driver
-            4000, 1875, -1700,
-            4300, 1800, -1700,
+            5400, 1500, -1350,
+            5400, 1500, -1500,
         ]);
         // Make normals
         var normArray = new Float32Array([
@@ -1591,11 +1594,11 @@ var CarLights = /** @class */ (function () {
             uniforms: {
                 texture: { value: this.glowStopText }
             },
-            vertexShader: stopBarVS,
-            fragmentShader: turnBarFS,
+            vertexShader: tailGridVS,
+            fragmentShader: tailGridFS,
             blending: THREE.AdditiveBlending,
-            transparent: true,
-            depthTest: false
+            transparent: false,
+            depthTest: true
         });
         this.glowStop = this.carChassis.getObjectByName("Stop");
         this.glowStop.material = glowStopMat;
@@ -1607,7 +1610,7 @@ var CarLights = /** @class */ (function () {
         var normArray = new Float32Array([-0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4, -0.9, 0, -0.4,]);
         this.flareTurnMat = this.flareHeadMat.clone();
         this.flareTurnMat.uniforms["texture"].value = this.flareTurnText;
-        this.flareTurnMat.uniforms["size"].value = 0.05;
+        this.flareTurnMat.uniforms["size"].value = 0.5;
         this.flareTurnMat.uniforms["brightness"].value = 1;
         var leftTurnGrid = new THREE.BufferGeometry();
         leftTurnGrid.addAttribute("position", new THREE.BufferAttribute(posArray, 3));
@@ -1628,11 +1631,11 @@ var CarLights = /** @class */ (function () {
                 texture: { value: this.glowTurnText },
                 lightsT: { value: this.uniLightsTurn }
             },
-            vertexShader: turnBarVS,
-            fragmentShader: turnBarFS,
+            vertexShader: tailGridVS,
+            fragmentShader: tailGridFS,
             blending: THREE.AdditiveBlending,
-            transparent: true,
-            depthTest: false
+            depthTest: true,
+            color: 0xffffff
         });
         this.carChassis.getObjectByName("Turn").material = this.glowTurnMat;
     };
@@ -1829,7 +1832,7 @@ var CarWheels = /** @class */ (function () {
     };
     //////////////////////////////// OTHER EVENTS ////////////////////////////////
     CarWheels.prototype.turnByRadiusRatio = function (_props) {
-        this.rotOverall = -_props.frameDist / CarProps_1.FF91.WheelCirc * Math.PI * 2;
+        this.rotOverall = -_props.frameDist / CarProps_1.FF91.WheelCirc * Math.PI * 1 ;
         this.rotFL =
             this.rotBL =
                 this.rotFR =
@@ -2155,9 +2158,9 @@ var Model = /** @class */ (function () {
         this.renderer.autoClear = false;
         // Set up cameras
         this.camOptions = {
-            distance: 90,
+            distance: 20,
             focusPos: this.camTarget,
-            distRange: { max: 40, min: 4 },
+            distRange: { max: 10, min: 4 },
             rotation: new THREE.Vector3(0, 0, 0),
             rotRange: { yMin: -1 },
             eyeSeparation: 0.3
@@ -2172,7 +2175,7 @@ var Model = /** @class */ (function () {
     Model.prototype.introPreloading = function () {
         this.grid.showWhiteGrid();
         TweenLite.to(this.cam, 1.0, { distTarget: 30 });
-        TweenLite.to(this.cam.rotTarget, 1.0, { x: 0, y: 90 });
+        TweenLite.to(this.cam.rotTarget, 1.0, { x: -30, y: 0 });
     };
     // 03: Preload has ended, build car
     Model.prototype.introPreloaded = function (_cargo) {
@@ -2184,7 +2187,7 @@ var Model = /** @class */ (function () {
     // 04: Start playing intro animation
     Model.prototype.introStart = function () {
         this.grid.goToBlackGrid();
-        TweenLite.to(this.cam.rotTarget, 1.0, { x: 0, y: 20 });
+        TweenLite.to(this.cam.rotTarget, 1.0, { x: -180, y: 10 });
         TweenLite.to(this.cam, 1.0, { distTarget: 10, distActual: 10 });
         TweenLite.to(this.spotLight, 3.0, { intensity: 1.0 });
         TweenLite.to(this.props, 3.0, { speed: 12.0 });

@@ -197,7 +197,7 @@ a{color: #fff;}
 #preLogo{
 	width: 140px;
 	height: 140px;
-	background: url("../textures/ffLogo.png") center center / 100% auto no-repeat;
+	background: url("../textures/flareHead.jpg") center center / 100% auto no-repeat;
 	position: fixed;
 	left: -160px;
 	top: 0px;
