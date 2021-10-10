@@ -1687,7 +1687,7 @@ var utils_1 = __webpack_require__(0);
 var CarWheels = /** @class */ (function () {
     function CarWheels(_carWhole, _cargo) {
         // Cap wheel rotation to avoid the "Wagon-wheel effect"
-        this.maxWheelTurn = Math.PI / 9.69;
+        this.maxWheelTurn = Math.PI / 13.69;
         this.parent = _carWhole;
         this.thread = _cargo["thread"];
         this.thread.minFilter = THREE.NearestFilter;
