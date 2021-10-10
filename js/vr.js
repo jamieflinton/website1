@@ -1510,7 +1510,7 @@ var CarLights = /** @class */ (function () {
         this.uniLightsOther = new THREE.Vector3(0, 1, 0);
         this.initLightMeshes();
         this.initHeadlightFlares();
-        //this.initStopFlares();
+        this.initStopFlares();
         this.initTurnFlares();
     }
     ////////////////// SOLID LIGHT MESHES //////////////////
@@ -1577,10 +1577,10 @@ var CarLights = /** @class */ (function () {
         ]);
         // Make normals
         var normArray = new Float32Array([
-            0.87, 0.22, 0.44,
-            0.87, 0.22, 0.44,
-            0.87, 0.22, -0.44,
-            0.87, 0.22, -0.44,
+            0.87, 0.42, 0,
+            0.87, 0.42, 0,
+            0.87, 0.42, 0,
+            0.87, 0.42, 0,
         ]);
         this.flareHeadGeom = new THREE.BufferGeometry();
         this.flareHeadGeom.addAttribute("position", new THREE.BufferAttribute(posArray, 3));
@@ -1589,20 +1589,44 @@ var CarLights = /** @class */ (function () {
         this.carChassis.add(this.flareHeadPoints);
     };
     ////////////////// STOPLIGHT FLARES //////////////////
-    //CarLights.prototype.initStopFlares = function () {
-      //  var glowStopMat = new THREE.ShaderMaterial({
-        //    uniforms: {
-          //      texture: { value: this.glowStopText }
-            //},
-            //vertexShader: tailGridVS,
-            //fragmentShader: tailGridFS,
-            //blending: THREE.AdditiveBlending,
-            //transparent: false,
-            //depthTest: true
-        //});
-        //this.glowStop = this.carChassis.getObjectByName("Stop");
-       // this.glowStop.material = glowStopMat;
-    //};
+    CarLights.prototype.initStopFlares = function () {
+     this.glowStopMat = new THREE.ShaderMaterial({
+        uniforms: {
+            texture: { value: this.glowStopText },
+            vpH: { value: window.innerHeight },
+            size: { value: 4.5 },
+            brightness: { value: 1.0 }
+        },
+        vertexShader: flareVS,
+        fragmentShader: flareFS,
+        blending: THREE.AdditiveBlending,
+        transparent: true,
+        depthWrite: false,
+        depthTest: false,
+    }); 
+         // Make positions
+            var posArray = new Float32Array([
+                // Passenger
+                5400, 1250, 1350,
+                5400, 1250, 1500,
+                // Driver
+                5400, 1250, -1350,
+                5400, 1250, -1500,
+            ]);
+         // Make normals
+        var normArray = new Float32Array([
+            0.87, 0.42, 0,
+            0.87, 0.42, 0,
+            0.87, 0.42, 0,
+            0.87, 0.42, 0,
+        ]);
+        this.flareStopGeom = new THREE.BufferGeometry();
+        this.flareStopGeom.addAttribute("position", new THREE.BufferAttribute(posArray, 3));
+        this.flareStopGeom.addAttribute("normal", new THREE.BufferAttribute(normArray, 3));
+        this.flareStopPoints = new THREE.Points(this.flareStopGeom, this.glowStopMat);
+        this.carChassis.add(this.flareStopPoints);
+    };
+
     ////////////////// TURN SIGNALS //////////////////
     CarLights.prototype.initTurnFlares = function () {
         // Left grid
@@ -1666,7 +1690,7 @@ var CarLights = /** @class */ (function () {
             this.uniLightsTurn.x = 0;
         }
         this.uniLightsOther.x = _props.braking;
-       // this.glowStop.visible = _props.braking ? true : false;
+        this.glowStopMat.visible = _props.braking ? true : false;
         this.flareLPoints.visible = this.uniLightsTurn.y ? true : false;
         this.flareRPoints.visible = this.uniLightsTurn.z ? true : false;
     };
